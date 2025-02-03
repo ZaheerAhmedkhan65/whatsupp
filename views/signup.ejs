@@ -1,14 +1,20 @@
 <%- include('partials/_header', { title: 'Log In' }) %>
-
-  <h1>Sign Up</h1>
-  <form action="/auth/signup" method="POST">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required>
-    <br>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-    <br>
-    <button type="submit">Sign Up</button>
-  </form>
-  <a href="/auth/login">Already have an account? Log In</a>
+  <div class="signup">
+    <div class="signup__message">
+      <p>Sign up to create an account and start chatting with your friends.</p>
+    </div>
+    <div>
+      <form action="/auth/signup" method="POST">
+        <h2>Sign Up</h2>
+         <label for="username">UserName</label>
+         <input type="text" id="username" name="username" required>
+         <br>
+         <label for="password">Password</label>
+         <input type="password" id="password" name="password" required>
+         <br>
+         <button type="submit">Sign Up</button>
+       </form>
+       <a href="/auth/login">Already have an account? Log In</a>
+    </div>
+  </div>
 <%- include('partials/_footer') %>

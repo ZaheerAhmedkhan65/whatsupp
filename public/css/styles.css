@@ -2,6 +2,8 @@ body {
     font-family: Arial, sans-serif;
     margin: 20px;
     overflow: hidden;
+    margin: 0;
+    padding: 0;
   }
   
   h1 {
@@ -14,6 +16,7 @@ body {
   
   .container {
     display: flex;
+    height: 100vh;
   }
   
   button {
@@ -57,11 +60,10 @@ body {
     left: 0;
     right: 0;
     padding: 10px 17px;
-    background-color: #f8f9fa;
+    background-color: #f4f4f4;
     display: flex;
     align-items: center;
-    margin: 0px 20px;
-    width: 73%;
+    width: 74%;
     margin-left: auto;
   }
   #message-form button {
@@ -136,7 +138,6 @@ body {
     background-color: #f4f4f4;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    height: 90vh;
   }
 
   .sidebar h2 {
@@ -172,11 +173,73 @@ body {
   /* Main content styling */
   .main-content {
     width: 80%;
-    padding: 0px 20px;
+    padding: 0px;
   }
 
   .main-content h1 {
     font-size: 1.3rem;
     margin: 0;
     color: #333;
+    padding: 10px;
+    background-color: #f4f4f4;
+  }
+
+  .login{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .login__message{
+    margin-top: 30px;
+  }
+
+  .login form{
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-bottom: 20px;
+  }
+
+  .login form input{  
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc; 
+  }
+
+  .login form button{
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc; 
+  }
+
+  .signup{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .signup__message{
+    margin-top: 30px; 
+  }
+
+  .signup form{
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1px; 
+    margin-bottom: 20px;
+  }
+
+  .signup form input{
+    padding: 5px 10px;
+    border-radius: 5px; 
+    border: 1px solid #ccc; 
+  }
+
+  .signup form button{
+    padding: 5px 10px;  
+    border-radius: 5px; 
+    border: 1px solid #ccc; 
   }
