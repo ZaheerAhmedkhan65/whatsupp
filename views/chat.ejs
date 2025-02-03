@@ -1,6 +1,6 @@
 <%- include('partials/_header', { title: 'Chat with ' + receiverUsername }); %>
   <div class="container">
-    <%- include('partials/_sidebar', { users, token }); %>
+    <%- include('partials/_sidebar', { users, token , friendRequests }); %>
     <div class="main-content">
       <h1>Chat with <%= receiverUsername %></h1>
       <div id="chat-window">

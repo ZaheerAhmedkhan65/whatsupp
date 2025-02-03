@@ -23,6 +23,19 @@ class User {
     const [rows] = await db.execute('SELECT id, username FROM users WHERE id != ?', [userId]);
     return rows;
   }
+
+  static async searchByUsername(username) {
+    console.log("Searching for username:", username); // Debugging
+  
+    const [rows] = await db.execute(
+      'SELECT id, username FROM users WHERE LOWER(username) LIKE LOWER(?)',
+      [`%${username}%`]
+    );
+  
+    console.log("Search results:", rows); // Debugging
+    return rows;
+  }
+  
 }
 
 module.exports = User;

@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const friendRoutes = require('./routes/friendRoutes');
+const userRoutes = require('./routes/userRoutes');
 const path = require('path');
 
 const app = express();
@@ -19,8 +21,12 @@ app.use(bodyParser.urlencoded({ extended: true })); // For form data
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
+
 app.use('/auth', authRoutes);
 app.use('/messages', messageRoutes);
+app.use('/friends', friendRoutes);
+app.use('/users', userRoutes);
+
 
 // Home route
 app.get('/',  (req, res) => {

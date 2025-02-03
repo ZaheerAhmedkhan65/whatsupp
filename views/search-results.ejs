@@ -1,0 +1,26 @@
+<%- include("partials/_header", { title: "Search Results" }) %>
+    <div>
+        <h2>Search Results</h2>
+        <% if (users.length===0) { %>
+            <p>No users found.</p>
+            <% } else { %>
+                <ul>
+                    <% users.forEach(user=> { %>
+
+                        <% if (user.id !==userId) { %>
+                            <li>
+                                <%= user.username %> (ID: <%= user.id %>)
+                                        <form action="/friends/send-request" method="POST">
+                                            <input type="hidden" name="receiverId" value="<%= user.id %>">
+                                            <input type="hidden" name="token" value="<%= token %>">
+                                            <button type="submit">Send Request</button>
+                                        </form>
+                            </li>
+                            <% } %>
+
+                    <% }); %>
+                </ul>
+                <% } %>
+
+    </div>
+    <%- include("partials/_footer") %>
