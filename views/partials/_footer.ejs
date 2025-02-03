@@ -1,0 +1,15 @@
+
+ 
+  <script>
+    const currentUrl = new URL(window.location.href);
+    const receiverId = currentUrl.searchParams.get('receiverId');
+    if (receiverId) {
+      const selectedUser = document.querySelector(`a[href*="receiverId=${receiverId}"]`);
+      if (selectedUser) {
+        selectedUser.style.backgroundColor = '#007bff';
+        selectedUser.style.color = '#fff';
+      }
+    }
+  </script>
+  </body>
+</html>

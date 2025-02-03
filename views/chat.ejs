@@ -1,0 +1,56 @@
+<%- include('partials/_header', { title: 'Chat with ' + receiverUsername }); %>
+  <div class="container">
+    <%- include('partials/_sidebar', { users, token }); %>
+    <div class="main-content">
+      <h1>Chat with <%= receiverUsername %></h1>
+      <div id="chat-window">
+        <% messages.forEach(message => { %>
+          <div class="message <%= message.sender_id === userId ? 'sent' : 'received' %>">
+            <p><%= message.message %></p>
+            <small><%= message.created_at %></small>
+          </div>
+        <% }) %>
+        <form id="message-form" action="/messages/send" method="POST">
+          <input type="hidden" name="receiverId" value="<%= receiverId %>">
+          <input type="hidden" name="token" value="<%= token %>"> <!-- Add this line -->
+          <textarea name="message" id="message" placeholder="Type your message..." required></textarea>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      scrollToBottom();
+      disableSubmitButton();
+    })
+
+    function scrollToBottom() {
+      const chatWindow = document.getElementById('chat-window');
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+    document.getElementById("message").addEventListener("input", () => {
+      if(document.getElementById("message").value.length == 0) {
+        disableSubmitButton();
+      } else {
+        document.getElementById('message-form').querySelector('button[type="submit"]').disabled = false;
+        document.getElementById('message-form').querySelector('button[type="submit"]').style.cursor = 'pointer';
+        document.getElementById('message-form').querySelector('button[type="submit"]').style.opacity = '1';
+      }
+    })
+    function disableSubmitButton() {
+      const submitButton = document.getElementById('message-form').querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.style.cursor = 'not-allowed';
+      submitButton.style.opacity = '0.5';
+    }
+   
+    document.getElementById('message').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        document.getElementById('message-form').submit();
+      }
+    })
+  </script>
+<%- include('partials/_footer') %>

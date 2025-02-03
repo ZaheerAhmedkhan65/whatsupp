@@ -1,0 +1,12 @@
+<div class="sidebar">
+    <h2>Users</h2>
+    <ul class="user-list">
+      <% users.forEach(user => { %>
+        <li>
+          <a href="/messages/chat?token=<%= token %>&receiverId=<%= user.id %>">
+            <%= user.username %>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+</div>
