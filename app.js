@@ -27,4 +27,8 @@ app.get('/',  (req, res) => {
   res.render('index'); // Render the index.ejs file
 });
 
+app.get('*', (req, res) => {
+  res.status(404).render('notfound');
+});
+
 module.exports = app;
