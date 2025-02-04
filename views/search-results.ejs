@@ -1,26 +1,24 @@
 <%- include("partials/_header", { title: "Search Results" }) %>
-    <div>
-        <h2>Search Results</h2>
-        <% if (users.length===0) { %>
-            <p>No users found.</p>
-            <% } else { %>
-                <ul>
-                    <% users.forEach(user=> { %>
-
-                        <% if (user.id !==userId) { %>
-                            <li>
-                                <%= user.username %> (ID: <%= user.id %>)
-                                        <form action="/friends/send-request" method="POST">
-                                            <input type="hidden" name="receiverId" value="<%= user.id %>">
-                                            <input type="hidden" name="token" value="<%= token %>">
-                                            <button type="submit">Send Request</button>
-                                        </form>
-                            </li>
-                            <% } %>
-
-                    <% }); %>
-                </ul>
+<div>
+    <h2>Search Results</h2>
+    <% if (users.length === 0) { %>
+        <p>No users found.</p>
+    <% } else { %>
+       <ul>
+        <% users.forEach(user => { %>
+            <div class="user">
+                <p><%= user.username %></p>
+        
+                <% if (friends.some(friend => friend.id === user.id)) { %>
+                    <span disabled style="border: 1px solid green; padding: 5px; border-radius: 5px;">Already Friends</span>
+                <% } else { %>
+                    <button class="btn btn-primary send-friend-request" data-user-id="<%= user.id %>">
+                        Send Friend Request
+                    </button>
                 <% } %>
-
-    </div>
-    <%- include("partials/_footer") %>
+            </div>
+        <% }); %>        
+       </ul>
+    <% } %>
+</div>
+<%- include("partials/_footer") %>

@@ -5,7 +5,7 @@
       <h1>Chat with <%= receiverUsername %></h1>
       <div id="chat-window">
         <% messages.forEach(message => { %>
-          <div class="message <%= message.sender_id === userId ? 'sent' : 'received' %>">
+          <div class="message <%= message.sender_id === userId ? 'sent' : 'received' %>" data-message-id="<%= message.id %>">
             <p><%= message.message %></p>
             <small><%= message.created_at %></small>
           </div>
