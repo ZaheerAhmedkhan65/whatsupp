@@ -14,7 +14,7 @@ const signup = async (req, res) => {
       return res.status(400).json({ error: 'Username already exists' });
     }
     const userId = await User.create(username, hashedPassword);
-    res.status(201).json({ message: 'User created', userId });
+    res.status(201).redirect('/auth/login');
   } catch (error) {
     console.error('Error creating user:', error);
     res.status(500).json({ error: 'Error creating user' });
@@ -31,14 +31,9 @@ const login = async (req, res) => {
 
     // Generate a JWT token
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    const friendRequests = await FriendRequest.findByReceiverId(user.id);
-    // Fetch freinds
-    const friends = await FriendRequest.getFriends(user.id);
-    // Fetch all users (except the logged-in user)
-    const users = await User.findAllExcept(user.id);
-
-    // Render the receiver selection page
-    res.render('select-receiver', { token, users, friendRequests, friends });
+    console.log('Generated token:', token);
+    // Redirect to /users/select-user with the token
+    res.redirect(`/users/select-receiver?token=${token}`);
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ error: 'Error during login' });

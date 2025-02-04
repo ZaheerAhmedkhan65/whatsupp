@@ -1,39 +1,55 @@
-<div class="sidebar">
-  <h2>Users</h2>
+<div class="px-2 pb-2">
+  <img src="/img/Whatsupp.png" alt="Whatsupp" class="img-fluid mb-1" width="20%">
   <!-- Search Bar -->
-  <form action="/users/search" method="GET" style="margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 5px;">
-    <input type="text" name="username" placeholder="Search by username" style="padding: 5px; border-radius: 5px; border: none;">
+  <form action="/users/search" method="GET" class="mb-3 d-flex align-items-center gap-2">
+    <input type="text" name="username" placeholder="Search by username" class="form-control" required>
     <input type="hidden" name="token" value="<%= token %>">
-    <button type="submit" style="padding: 4px; border-radius: 5px;">Search</button>
-</form>
-
-  <ul class="user-list" id="user-list">
-    <% friends.forEach(user => { %>
-      <li>
-        <a href="/messages/chat?token=<%= token %>&receiverId=<%= user.id %>">
+    <button type="submit" class="btn btn btn-success">Search</button>
+  </form>
+  <hr class="mb-3">
+  <h2 class="mb-2 lead fs-5 fw-bold">Users</h2>
+  <ul class="list-group" id="user-list">
+    <% friends.forEach(user=> { %>
+      <a href="/messages/chat?token=<%= token %>&receiverId=<%= user.id %>"
+        class="btn text-start text-decoration-none lead bg-success-subtle mb-2">
+        <li class="btn p-0">
           <%= user.username %>
-        </a>
-      </li>
-    <% }) %>
+        </li>
+      </a>
+      <% }) %>
   </ul>
-
+  
   <!-- Pending Friend Requests -->
-  <h2>Pending Requests</h2>
-  <ul class="friend-requests" id="friend-requests">
-    <% friendRequests.forEach(request => { %>
-      <li>
-        <%= request.sender_username %>
-        <form action="/friends/accept-request" method="POST">
-          <input type="hidden" name="requestId" value="<%= request.id %>">
-          <input type="hidden" name="token" value="<%= token %>">
-          <button type="submit">Accept</button>
-        </form>
-        <form action="/friends/reject-request" method="POST">
-          <input type="hidden" name="requestId" value="<%= request.id %>">
-          <input type="hidden" name="token" value="<%= token %>">
-          <button type="submit">Reject</button>
-        </form>
+   <% if(friendRequests.length > 0) {%>
+  <hr class="mb-3">
+  <h2 class="mb-2 lead fs-5 fw-bold">Pending Requests</h2>
+  <ul class="list-group" id="friend-requests">
+    <% friendRequests.forEach(request=> { %>
+      <li style="cursor: default;" class="btn d-flex align-items-center justify-content-between ">
+        <h3 class="lead fs-4 "><strong>
+            <%= request.sender_username %>
+          </strong></h3>
+        <div class="d-flex gap-2 align-items-center">
+          <form action="/friends/accept-request" method="POST" class="m-0 p-0">
+            <input type="hidden" name="requestId" value="<%= request.id %>">
+            <input type="hidden" name="token" value="<%= token %>">
+            <button type="submit" class="btn btn-sm btn-success">Accept</button>
+          </form>
+          <form action="/friends/reject-request" method="POST" class="m-0 p-0">
+            <input type="hidden" name="requestId" value="<%= request.id %>">
+            <input type="hidden" name="token" value="<%= token %>">
+            <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+          </form>
+        </div>
       </li>
-    <% }) %>
+      <% }) %>
   </ul>
+  <hr class="mb-3">
+  <% } %>
+  <div class="position-fixed bottom-0">
+    <h2 class="mb-2 lead fs-5 fw-bold">Profile</h2>
+    <h3 class="lead fs-5"><strong>
+        <%= currentUser.username %>
+      </strong></h3>
+  </div>
 </div>

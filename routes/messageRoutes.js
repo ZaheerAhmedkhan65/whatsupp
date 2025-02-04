@@ -30,7 +30,7 @@ router.get('/chat', authenticate, async (req, res) => {
     // Fetch all users except the logged-in user
     const users = await User.findAllExcept(req.userId);
     const friends = await FriendRequest.getFriends(req.userId);  // Get the friends of the logged-in user
-
+    const currentUser = await User.findByUserId(req.userId);
 
     // Fetch pending friend requests
     const friendRequests = await FriendRequest.findByReceiverId(req.userId);
@@ -44,6 +44,7 @@ router.get('/chat', authenticate, async (req, res) => {
       token: req.query.token,
       friends,
       users,
+      currentUser,
       friendRequests, // Pass pending friend requests to the template
     });
   } catch (error) {

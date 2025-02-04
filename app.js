@@ -19,6 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // For form data
 
 // Serve static files (CSS, JS, images)
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/img', express.static(path.join(__dirname, 'public/img')));
 
 // Routes
 

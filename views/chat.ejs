@@ -1,56 +1,80 @@
 <%- include('partials/_header', { title: 'Chat with ' + receiverUsername }); %>
-  <div class="container">
-    <%- include('partials/_sidebar', { users, token , friendRequests }); %>
-    <div class="main-content">
-      <h1>Chat with <%= receiverUsername %></h1>
-      <div id="chat-window">
+
+<div class="container-fluid vh-100 d-flex flex-column">
+  <div class="row flex-grow-1">
+    <!-- Sidebar (Hidden on Mobile) -->
+    <div class="col-lg-3 d-none d-lg-block bg-primary p-3">
+      <%- include('partials/_sidebar', { users, token , friendRequests }); %>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="col-lg-9 d-flex flex-column bg-light p-0">
+      <!-- Chat Header (Fixed) -->
+      <div class="bg-primary py-2 px-3 text-white">
+        <h1 class="lead fs-4 fw-bold mb-0"><%= receiverUsername %></h1>
+      </div>
+
+      <!-- Chat Messages (Scrollable) -->
+      <div id="chat-window"  class="flex-grow-1 overflow-auto p-3 bg-dark">
         <% messages.forEach(message => { %>
-          <div class="message <%= message.sender_id === userId ? 'sent' : 'received' %>" data-message-id="<%= message.id %>">
-            <p><%= message.message %></p>
-            <small><%= message.created_at %></small>
+          <div class="message <%= message.sender_id === userId ? 'sent' : 'received' %> p-2 mb-2 rounded">
+            <p class="mb-1"><%= message.message %></p>
+            <small class="text-muted"><%= message.created_at %></small>
           </div>
         <% }) %>
-        <form id="message-form" action="/messages/send" method="POST">
+      </div>
+
+      <!-- Message Form (Fixed at Bottom) -->
+      <div class="bg-primary p-2 position-relative">
+        <form class="d-flex gap-2 align-items-center" id="message-form" action="/messages/send" method="POST">
           <input type="hidden" name="receiverId" value="<%= receiverId %>">
-          <input type="hidden" name="token" value="<%= token %>"> <!-- Add this line -->
-          <textarea name="message" id="message" placeholder="Type your message..." required></textarea>
-          <button type="submit">Send</button>
+          <input type="hidden" name="token" value="<%= token %>">
+          <textarea name="message" rows="1" id="message" placeholder="Type your message..." class="form-control" required></textarea>
+          <button type="submit" class="btn">Send</button>
         </form>
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      scrollToBottom();
+<!-- JavaScript for Auto-Scrolling & Form Handling -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    scrollToBottom();
+    disableSubmitButton();
+  });
+
+  function scrollToBottom() {
+    const chatWindow = document.getElementById('chat-window');
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+
+  function disableSubmitButton() {
+    const submitButton = document.querySelector('#message-form button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.style.cursor = 'not-allowed';
+    submitButton.style.opacity = '0.5';
+    submitButton.classList.remove('btn-success');
+  }
+
+  document.getElementById("message").addEventListener("input", () => {
+    const submitButton = document.querySelector('#message-form button[type="submit"]');
+    if (document.getElementById("message").value.length === 0) {
       disableSubmitButton();
-    })
+    } else {
+      submitButton.disabled = false;
+      submitButton.style.cursor = 'pointer';
+      submitButton.style.opacity = '1';
+      submitButton.classList.add('btn-success');
+    }
+  });
 
-    function scrollToBottom() {
-      const chatWindow = document.getElementById('chat-window');
-      chatWindow.scrollTop = chatWindow.scrollHeight;
+  document.getElementById('message').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      document.getElementById('message-form').submit();
     }
-    document.getElementById("message").addEventListener("input", () => {
-      if(document.getElementById("message").value.length == 0) {
-        disableSubmitButton();
-      } else {
-        document.getElementById('message-form').querySelector('button[type="submit"]').disabled = false;
-        document.getElementById('message-form').querySelector('button[type="submit"]').style.cursor = 'pointer';
-        document.getElementById('message-form').querySelector('button[type="submit"]').style.opacity = '1';
-      }
-    })
-    function disableSubmitButton() {
-      const submitButton = document.getElementById('message-form').querySelector('button[type="submit"]');
-      submitButton.disabled = true;
-      submitButton.style.cursor = 'not-allowed';
-      submitButton.style.opacity = '0.5';
-    }
-   
-    document.getElementById('message').addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        document.getElementById('message-form').submit();
-      }
-    })
-  </script>
+  });
+</script>
+
 <%- include('partials/_footer') %>

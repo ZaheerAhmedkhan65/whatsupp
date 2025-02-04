@@ -21,7 +21,8 @@ router.get('/search', authenticate, async (req, res) => {
 
        // Filter users based on the search query
        users = users.filter(user => user.username.toLowerCase().includes(username.toLowerCase()));
-
+      let friendRequests = await FriendRequest.findByReceiverId(req.userId);
+      let currentUser = await User.findByUserId(req.userId);
       const friends = await FriendRequest.getFriends(req.userId);
       if (users.length === 0) {
         console.log("No users found matching:", username);
@@ -29,11 +30,39 @@ router.get('/search', authenticate, async (req, res) => {
         console.log("Users found:", users);
       }
   
-      res.render('search-results', { users , token: req.query.token, userId: req.userId, friends });
+      res.render('search-results', { users , token: req.query.token, userId: req.userId, friends, friendRequests, currentUser });
     } catch (error) {
       console.error('Error searching users:', error);
       res.status(500).json({ error: 'Error searching users' });
     }
   });
+
+  router.get('/select-receiver', authenticate, async (req, res) => {
+    try {
+      // Fetch users excluding the logged-in user
+      const users = await User.findAllExcept(req.userId);
+      const currentUser = await User.findByUserId(req.userId);
   
+      // Fetch friend requests for the logged-in user
+      const friendRequests = await FriendRequest.findByReceiverId(req.userId);
+  
+      // Fetch friends of the logged-in user
+      const friends = await FriendRequest.getFriends(req.userId);
+  
+      // Render select-user page
+      res.render('select-receiver', { 
+        users, 
+        currentUser,
+        friendRequests, 
+        friends, 
+        token: req.query.token 
+      });
+  
+    } catch (error) {
+      console.error('Error fetching select-user data:', error);
+      res.status(500).json({ error: 'Error loading select-user page' });
+    }
+  });
+
+
 module.exports = router;

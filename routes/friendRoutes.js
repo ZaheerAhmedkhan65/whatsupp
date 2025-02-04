@@ -9,6 +9,8 @@ const router = express.Router();
 router.post('/send-request', authenticate, async (req, res) => {
     const { receiverId } = req.body;
     const senderId = req.userId;
+    console.log('Send token:', req.body.token);
+    console.log('Full body:', req.body);
   
     console.log('Received friend request from:', senderId, 'to:', receiverId);
   
@@ -16,7 +18,7 @@ router.post('/send-request', authenticate, async (req, res) => {
       const requestId = await FriendRequest.create(senderId, receiverId);
       console.log('Friend request created with ID:', requestId);
       
-      res.status(201).json({ message: 'Friend request sent' });
+      res.redirect(`/users/select-receiver?token=${req.body.token}`);
     } catch (error) {
       console.error('Error sending friend request:', error);
       res.status(500).json({ error: 'Error sending friend request' });
@@ -28,6 +30,8 @@ router.post('/send-request', authenticate, async (req, res) => {
 // Accept a friend request
 router.post('/accept-request', authenticate, async (req, res) => {
     const { requestId } = req.body;
+    console.log('Received token:', req.body.token);
+    console.log('Full body:', req.body);
     console.log('Accept request called with ID:', requestId); // Debugging log
   
     try {
@@ -60,7 +64,7 @@ router.post('/accept-request', authenticate, async (req, res) => {
       await Friend.create(request.sender_id, request.receiver_id);
       await Friend.create(request.receiver_id, request.sender_id);
   
-      res.json({ message: 'Friend request accepted' });
+      res.redirect(`/users/select-receiver?token=${req.body.token}`);
     } catch (error) {
       console.error('Error accepting friend request:', error);
       res.status(500).json({ error: 'Error accepting friend request' });
@@ -71,9 +75,11 @@ router.post('/accept-request', authenticate, async (req, res) => {
 // Reject a friend request
 router.post('/reject-request', authenticate, async (req, res) => {
   const { requestId } = req.body;
+  console.log('Rejected token:', req.body.token);
+  console.log('Full body:', req.body);
   try {
     await FriendRequest.rejectRequest(requestId);
-    res.json({ message: 'Friend request rejected' });
+    res.redirect(`/users/select-receiver?token=${req.body.token}`);
   } catch (error) {
     console.error('Error rejecting friend request:', error);
     res.status(500).json({ error: 'Error rejecting friend request' });

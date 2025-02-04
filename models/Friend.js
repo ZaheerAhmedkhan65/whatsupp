@@ -27,9 +27,6 @@ class Friend {
     );
     return rows;
   }
-  
-  
-
 }
 
 module.exports = Friend;
