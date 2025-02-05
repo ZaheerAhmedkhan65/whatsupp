@@ -1,80 +1,181 @@
 <%- include('partials/_header', { title: 'Chat with ' + receiverUsername }); %>
 
-<div class="container-fluid vh-100 d-flex flex-column">
-  <div class="row flex-grow-1">
-    <!-- Sidebar (Hidden on Mobile) -->
-    <div class="col-lg-3 d-none d-lg-block bg-primary p-3">
-      <%- include('partials/_sidebar', { users, token , friendRequests }); %>
-    </div>
-
-    <!-- Chat Window -->
-    <div class="col-lg-9 d-flex flex-column bg-light p-0">
-      <!-- Chat Header (Fixed) -->
-      <div class="bg-primary py-2 px-3 text-white">
-        <h1 class="lead fs-4 fw-bold mb-0"><%= receiverUsername %></h1>
+  <div class="container-fluid vh-100 d-flex flex-column">
+    <div class="row flex-grow-1">
+      <!-- Sidebar (Hidden on Mobile) -->
+      <div class="col-lg-3 d-none d-lg-block bg-primary p-3">
+        <%- include('partials/_sidebar', { users, token , friendRequests }); %>
       </div>
 
-      <!-- Chat Messages (Scrollable) -->
-      <div id="chat-window"  class="flex-grow-1 overflow-auto p-3 bg-dark">
-        <% messages.forEach(message => { %>
-          <div class="message <%= message.sender_id === userId ? 'sent' : 'received' %> p-2 mb-2 rounded">
-            <p class="mb-1"><%= message.message %></p>
-            <small class="text-muted"><%= message.created_at %></small>
-          </div>
-        <% }) %>
-      </div>
+      <!-- Chat Window -->
+      <div class="col-lg-9 d-flex flex-column bg-light p-0">
+        <!-- Chat Header (Fixed) -->
+        <div class="bg-primary py-2 px-3 text-white">
+          <h1 class="lead fs-4 fw-bold mb-0">
+            <%= receiverUsername %>
+          </h1>
+        </div>
 
-      <!-- Message Form (Fixed at Bottom) -->
-      <div class="bg-primary p-2 position-relative">
-        <form class="d-flex gap-2 align-items-center" id="message-form" action="/messages/send" method="POST">
-          <input type="hidden" name="receiverId" value="<%= receiverId %>">
-          <input type="hidden" name="token" value="<%= token %>">
-          <textarea name="message" rows="1" id="message" placeholder="Type your message..." class="form-control" required></textarea>
-          <button type="submit" class="btn">Send</button>
-        </form>
+        <!-- Chat Messages (Scrollable) -->
+        <div id="chat-window" class="flex-grow-1 overflow-auto p-3 bg-dark">
+          <% messages.forEach(message=> { %>
+            <% if(message.is_deleted===0) { %>
+              <div class="message <%= message.sender_id === userId ? 'sent' : 'received' %> p-2 mb-2 rounded"
+                id="message-container-<%= message.id %>">
+                <% if (message.sender_id===userId) { %>
+                  <div class="message-dropdown position-relative">
+                      <div class="btn-group dropstart">
+                        <button type="button" style="padding: 0 0 4px !important;" class="btn btn-sm bg-transparent p-0 border-0 m-0 rounded-circle dropdown-toggle"
+                          data-bs-toggle="dropdown" aria-expanded="false">
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li class="dropdown-item">
+                            <button class="dropdown-item"
+                              onclick="editMessage('<%= message.id %>', '<%= token %>','<%= receiverId %>')">
+                              <i class="ri-pencil-line"></i> Edit
+                            </button>
+                          </li>
+                          <li class="dropdown-item">
+                            <form id="deleteMessageForm" class="m-0 p-0">
+                              <input type="hidden" name="token" value="<%= token %>">
+                              <input type="hidden" name="receiverId" value="<%= receiverId %>">
+                              <button type="button" class="dropdown-item"
+                                onclick="deleteMessage('<%= message.id %>', '<%= token %>', '<%= receiverId %>')">
+                                <i class="ri-delete-bin-5-line"></i> Delete
+                              </button>
+                            </form>
+                          </li>
+                        </ul>
+                      </div>
+                  </div>
+                  <% } %>
+                  <div class="message-content">
+                    <p class="mb-1">
+                      <%= message.message %>
+                    </p>
+                    <small class="text-muted">
+                      <%= message.created_at %>
+                    </small>
+                  </div>
+              </div>
+              <% } %>
+                <% }) %>
+        </div>
+
+        <!-- Message Form (Fixed at Bottom) -->
+        <div class="bg-primary p-2 position-relative">
+          <form class="d-flex gap-2 align-items-center" id="message-form" action="/messages/send" method="POST">
+            <input type="hidden" name="receiverId" value="<%= receiverId %>">
+            <input type="hidden" name="token" value="<%= token %>">
+            <textarea name="message" rows="1" id="message" placeholder="Type your message..." class="form-control outline-0 border-0"
+              required></textarea>
+            <button type="submit" class="btn">Send</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- JavaScript for Auto-Scrolling & Form Handling -->
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    scrollToBottom();
-    disableSubmitButton();
-  });
-
-  function scrollToBottom() {
-    const chatWindow = document.getElementById('chat-window');
-    chatWindow.scrollTop = chatWindow.scrollHeight;
-  }
-
-  function disableSubmitButton() {
-    const submitButton = document.querySelector('#message-form button[type="submit"]');
-    submitButton.disabled = true;
-    submitButton.style.cursor = 'not-allowed';
-    submitButton.style.opacity = '0.5';
-    submitButton.classList.remove('btn-success');
-  }
-
-  document.getElementById("message").addEventListener("input", () => {
-    const submitButton = document.querySelector('#message-form button[type="submit"]');
-    if (document.getElementById("message").value.length === 0) {
+  <!-- JavaScript for Auto-Scrolling & Form Handling -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      scrollToBottom();
       disableSubmitButton();
-    } else {
-      submitButton.disabled = false;
-      submitButton.style.cursor = 'pointer';
-      submitButton.style.opacity = '1';
-      submitButton.classList.add('btn-success');
-    }
-  });
+    });
 
-  document.getElementById('message').addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      document.getElementById('message-form').submit();
+    function scrollToBottom() {
+      const chatWindow = document.getElementById('chat-window');
+      chatWindow.scrollTop = chatWindow.scrollHeight;
     }
-  });
-</script>
 
-<%- include('partials/_footer') %>
+    function disableSubmitButton() {
+      const submitButton = document.querySelector('#message-form button[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.style.cursor = 'not-allowed';
+      submitButton.style.opacity = '0.5';
+      submitButton.classList.remove('btn-success');
+    }
+
+    document.getElementById("message").addEventListener("input", () => {
+      const submitButton = document.querySelector('#message-form button[type="submit"]');
+      if (document.getElementById("message").value.length === 0) {
+        disableSubmitButton();
+      } else {
+        submitButton.disabled = false;
+        submitButton.style.cursor = 'pointer';
+        submitButton.style.opacity = '1';
+        submitButton.classList.add('btn-success');
+      }
+    });
+
+    document.getElementById('message').addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        document.getElementById('message-form').submit();
+      }
+    });
+  </script>
+
+  <script>
+    // Function to fetch and show the edit form
+    function editMessage(messageId, token, receiverId) {
+      const messageContainer = document.getElementById(`message-container-${messageId}`);
+
+      if (!messageContainer) {
+        console.error(`Element not found: message-container-${messageId}`);
+        return;
+      }
+
+      fetch(`/messages/edit/${messageId}?token=${token}&receiverId=${receiverId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(response => {
+          if (!response.ok) throw new Error('Unauthorized or bad request');
+          return response.text();
+        })
+        .then(html => {
+          messageContainer.innerHTML = html;
+        })
+        .catch(error => console.error('Error fetching edit form:', error));
+    }
+
+    // Function to cancel editing
+    function cancelEdit(messageId) {
+      location.reload(); // Refresh to restore the original message
+    }
+
+    function deleteMessage(messageId, token, receiverId) {
+      if(!confirm('Are you sure you want to delete this message?')){
+        return;
+      }
+      fetch(`/messages/delete/${messageId}?token=${token}&receiverId=${receiverId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          token: token,
+          receiverId: receiverId
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data); // Log the response to ensure it's as expected
+          if (data.success) {
+            // Successfully deleted the message
+            location.reload();
+          } else {
+            alert('Error deleting message');
+          }
+        })
+        .catch(error => console.error('Error:', error));
+
+    }
+
+
+  </script>
+
+  <%- include('partials/_footer') %>

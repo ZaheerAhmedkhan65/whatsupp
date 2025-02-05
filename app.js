@@ -28,7 +28,6 @@ app.use('/messages', messageRoutes);
 app.use('/friends', friendRoutes);
 app.use('/users', userRoutes);
 
-
 // Home route
 app.get('/',  (req, res) => {
   res.render('index'); // Render the index.ejs file

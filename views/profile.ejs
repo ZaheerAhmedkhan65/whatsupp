@@ -1,0 +1,16 @@
+<%- include("partials/_header", { title: "Profile" }) %>
+
+<h1>Profile</h1>
+<%= currentUser.username %>
+<h3>Chats</h3>
+<ul>
+    <% friends.forEach(friend => { %>
+        <li><%= friend.username %></li>
+    <% }) %>
+</ul>
+<form action="/auth/logout" method="Get">
+    <input type="hidden" name="token" value="<%= token %>">
+    <button type="submit" class="btn btn-danger">Logout</button>
+</form>
+<%- include("partials/_footer") %>
+

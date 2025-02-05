@@ -23,6 +23,12 @@
     max-width: 70%;
     width: fit-content;
     display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.message-content {
+    display: flex;
     align-items: end;
     gap: 10px;
 }
@@ -106,3 +112,12 @@ textarea:focus {
 #search-results-window::-webkit-scrollbar-track {
     background-color: transparent;
 }
+.message-dropdown {
+    display: none;  
+    transition: display 0.3s ease; 
+}
+
+.message:hover .message-dropdown {
+    display: block; 
+}
+

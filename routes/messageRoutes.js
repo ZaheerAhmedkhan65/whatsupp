@@ -1,9 +1,10 @@
 const express = require('express');
 const authenticate = require('../middleware/authMiddleware');
-const { getMessages, sendMessage } = require('../controllers/messageController');
+const { getMessages, sendMessage, updateMessage, deleteMessage } = require('../controllers/messageController');
 const User = require('../models/Users');
 const Friend = require('../models/Friend'); // Import the Friend model
 const FriendRequest = require('../models/FriendRequest');
+const Message = require('../models/Message');
 
 const router = express.Router();
 
@@ -53,6 +54,27 @@ router.get('/chat', authenticate, async (req, res) => {
   }
 });
 
+router.get('/edit/:messageId', authenticate, async (req, res) => {
+  const { messageId } = req.params;
+  const receiverId = req.query.receiverId;
+  try {
+    const message = await Message.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+    if (message.sender_id !== req.userId) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+    res.render('partials/_edit_message', { message , token: req.query.token, receiverId });
+  } catch (error) {
+    console.error('Error fetching message for editing:', error);
+    res.status(500).json({ error: 'Error fetching message for editing' });
+  }
+});
+
+
 router.post('/send', authenticate, sendMessage);
+router.post('/update/:messageId', authenticate, updateMessage);
+router.delete('/delete/:messageId', authenticate, deleteMessage);
 
 module.exports = router;

@@ -29,6 +29,11 @@ class Message {
   static async delete(messageId) {
     await db.execute('UPDATE messages SET is_deleted = TRUE WHERE id = ?', [messageId]);
   }
+  static async findById(id) {
+    const [rows] = await db.execute('SELECT * FROM messages WHERE id = ?', [id]);
+    return rows[0];
+  };
+
 }
   
 module.exports = Message;

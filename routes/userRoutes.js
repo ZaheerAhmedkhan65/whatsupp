@@ -39,6 +39,7 @@ router.get('/search', authenticate, async (req, res) => {
 
   router.get('/select-receiver', authenticate, async (req, res) => {
     try {
+      console.log('UserId:', req.userId);
       // Fetch users excluding the logged-in user
       const users = await User.findAllExcept(req.userId);
       const currentUser = await User.findByUserId(req.userId);
@@ -62,6 +63,21 @@ router.get('/search', authenticate, async (req, res) => {
       console.error('Error fetching select-user data:', error);
       res.status(500).json({ error: 'Error loading select-user page' });
     }
+  });
+
+  router.get('/profile',authenticate,async (req, res) => {
+        try {
+          const currentUser = await User.findByUserId(req.userId);
+          const friends = await FriendRequest.getFriends(req.userId);
+          res.render('profile',{
+            currentUser,
+            friends,
+            token: req.query.token
+          })
+        } catch (error) {
+          console.error("error fetching user data :", error);
+          res.status(500).json({error: "Error loading user profile page"})
+        }
   });
 
 

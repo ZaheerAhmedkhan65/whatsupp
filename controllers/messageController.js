@@ -16,6 +16,7 @@ const getMessages = async (req, res) => {
     const senderId = req.userId;
     try {
         const messages = await Message.findByUsers(senderId, receiverId);
+        messages.filter(message => message.is_deleted === 0);
         // Format the created_at timestamp
         const formattedMessages = messages.map(message => ({
             ...message,
@@ -35,10 +36,10 @@ const getMessages = async (req, res) => {
 
 const updateMessage = async (req, res) => {
     const { messageId } = req.params;
-    const { newMessage } = req.body;
+    const { newMessage , token, receiverId } = req.body;
     try {
         await Message.update(messageId, newMessage);
-        res.json({ message: 'Message updated' });
+        res.redirect(`/messages/chat?token=${token}&receiverId=${receiverId}`);
     } catch (error) {
         res.status(500).json({ error: 'Error updating message' });
     }
@@ -46,12 +47,23 @@ const updateMessage = async (req, res) => {
 
 const deleteMessage = async (req, res) => {
     const { messageId } = req.params;
+    const { token, receiverId } = req.body;
+
     try {
-        await Message.delete(messageId);
-        res.json({ message: 'Message deleted' });
+        const result = await Message.delete(messageId);
+        
+        if (result === 0) {
+            return res.status(404).json({ error: 'Message not found' });
+        }
+
+        // Successfully deleted the message
+        res.json({ success: true, token, receiverId });
     } catch (error) {
+        console.error('Error deleting message:', error); // Log more details
         res.status(500).json({ error: 'Error deleting message' });
     }
 };
+
+
 
 module.exports = { sendMessage, getMessages, updateMessage, deleteMessage };
