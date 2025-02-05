@@ -15,7 +15,6 @@ router.get('/search', authenticate, async (req, res) => {
     }
   
     try {
-      console.log("Received search request for:", username);
        // Get all users except the current user
        let users = await User.findAllExcept(req.userId);
 
