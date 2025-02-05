@@ -35,6 +35,20 @@ class User {
     console.log("Search results:", rows); // Debugging
     return rows;
   }
+
+  static async updateAbout(userId,about){
+    const [rows] = await db.execute(
+      'UPDATE users SET about = ? WHERE id = ?', [about, userId]
+    );
+    return rows;
+  };
+
+  static async updateName(userId,name){
+    const [rows] = await db.execute(
+      'UPDATE users SET username = ? WHERE id = ?', [name, userId]
+    );
+    return rows;
+  };
   
 }
 

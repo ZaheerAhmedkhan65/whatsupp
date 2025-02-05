@@ -68,16 +68,69 @@ router.get('/search', authenticate, async (req, res) => {
         try {
           const currentUser = await User.findByUserId(req.userId);
           const friends = await FriendRequest.getFriends(req.userId);
+          const friendRequests = await FriendRequest.findByReceiverId(req.userId);
+          const users = await User.findAllExcept(req.userId);
+
           res.render('profile',{
             currentUser,
             friends,
-            token: req.query.token
+            friendRequests,
+            users,
+            token: req.query.token,
+            userId:req.userId
           })
         } catch (error) {
           console.error("error fetching user data :", error);
           res.status(500).json({error: "Error loading user profile page"})
         }
   });
+
+  router.get('/edit-about/:userId', authenticate, async (req, res) =>{
+    try{
+      const { userId } = req.params;
+      const currentUser = await User.findByUserId(userId);
+      res.render("partials/_user_about", {currentUser,userId,token:req.query.token});
+    } catch (error) {
+      console.error("error fetching user data :", error);
+      res.status(500).json({error: "Error loading user about page"})
+    }
+  });
+  
+  router.post('/update-about/:userId',authenticate, async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { newAbout,token } = req.body;
+        await User.updateAbout(userId, newAbout);
+        res.redirect(`/users/profile?token=${token}`);
+    } catch (error) {
+        console.error("Error updating user about:", error);
+        res.status(500).json({ error: "Error updating user about" });
+    }
+});
+
+router.get('/edit-name/:userId', authenticate, async (req, res) =>{
+  try{
+    const { userId } = req.params;
+    const currentUser = await User.findByUserId(userId);
+    res.render("partials/_user_name", {currentUser,userId,token:req.query.token});
+  } catch (error) {
+    console.error("error fetching user data :", error);
+    res.status(500).json({error: "Error loading user about page"})
+  }
+});
+
+router.post('/update-name/:userId',authenticate, async (req, res) => {
+  try {
+      const { userId } = req.params;
+      const { newUsername,token } = req.body;
+      await User.updateName(userId, newUsername);
+      res.redirect(`/users/profile?token=${token}`);
+  } catch (error) {
+      console.error("Error updating user about:", error);
+      res.status(500).json({ error: "Error updating user about" });
+  }
+});
+
 
 
 module.exports = router;

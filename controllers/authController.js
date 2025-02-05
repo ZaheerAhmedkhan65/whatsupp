@@ -41,6 +41,8 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
+  
+  const token = req.query.token;
   res.redirect('/auth/login');
 };
 
