@@ -6,6 +6,9 @@ const messageRoutes = require('./routes/messageRoutes');
 const friendRoutes = require('./routes/friendRoutes');
 const userRoutes = require('./routes/userRoutes');
 const path = require('path');
+const cookieParser = require('cookie-parser');
+
+
 
 const app = express();
 
@@ -16,6 +19,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data
+app.use(cookieParser());
 
 // Serve static files (CSS, JS, images)
 app.use(express.static(path.join(__dirname, 'public')));

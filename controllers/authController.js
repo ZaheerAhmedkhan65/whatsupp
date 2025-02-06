@@ -1,8 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/Users');
-const FriendRequest = require('../models/FriendRequest'); // Import the FriendRequest model
-
 require('dotenv').config();
 
 const signup = async (req, res) => {
@@ -29,11 +27,18 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Generate a JWT token
+    // Generate a JWT token with a short expiry time (e.g., 1 hour)
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    console.log('Generated token:', token);
-    // Redirect to /users/select-user with the token
-    res.redirect(`/users/select-receiver?token=${token}`);
+
+    // Set the token in an HTTP-only cookie that expires in 1 week
+    res.cookie('token', token, {
+      httpOnly: true, // Prevent JavaScript access to the cookie
+      secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week expiration time
+      sameSite: 'Strict', // Prevent CSRF attacks
+    });
+
+    res.redirect('/users/select-receiver');
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ error: 'Error during login' });
@@ -41,8 +46,8 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  
-  const token = req.query.token;
+  // Clear the token cookie
+  res.clearCookie('token');
   res.redirect('/auth/login');
 };
 

@@ -40,15 +40,7 @@
                                 <i class="ri-pencil-line"></i> 
                             </button>
                     </p>
-                    <h3>Friends</h3>
-                    <ul class="">
-                        <% friends.forEach(friend=> { %>
-                            <li class="">
-                                <%= friend.username %>
-                            </li>
-                            <% }) %>
-                    </ul>
-                    <form action="/auth/logout" method="Get">
+                    <form action="/auth/logout" method="get" onsubmit="return confirmLogout('<%= currentUser.username %>')">
                         <input type="hidden" name="token" value="<%= token %>">
                         <button type="submit" class="btn btn-danger">Logout</button>
                     </form>
@@ -103,6 +95,10 @@
                 })
                 .catch(error => console.error('Error fetching edit form:', error));
             }
+            function confirmLogout(name) {
+        // Show a confirmation dialog before logout
+        return confirm(`${name} Are you sure you want to log out?`);
+    }
     </script>
 
     <%- include('partials/_footer') %>

@@ -20,7 +20,7 @@
         </div>
 
         <!-- Chat Messages (Scrollable) -->
-        <div id="chat-window" class="flex-grow-1 overflow-auto p-3 bg-dark">
+        <div id="chat-window" class="flex-grow-1 overflow-auto p-3">
           <% messages.forEach(message=> { %>
             <% if(message.is_deleted===0) { %>
               <div class="message <%= message.sender_id === userId ? 'sent' : 'received' %> p-2 mb-2 rounded"
@@ -66,7 +66,7 @@
         </div>
 
         <!-- Message Form (Fixed at Bottom) -->
-        <div class="bg-primary p-2 position-relative">
+        <div class="bg-primary px-2 pt-2 pb-3 position-relative">
           <form class="d-flex gap-2 align-items-center" id="message-form" action="/messages/send" method="POST">
             <input type="hidden" name="receiverId" value="<%= receiverId %>">
             <input type="hidden" name="token" value="<%= token %>">
@@ -177,7 +177,6 @@
         .catch(error => console.error('Error:', error));
 
     }
-
 
   </script>
 

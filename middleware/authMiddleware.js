@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const authenticate = (req, res, next) => {
   // Check for token in query parameters (GET requests) or request body (POST requests)
-  const token = req.query.token || req.body.token || req.header('Authorization')?.replace('Bearer ', '');
+  const token = req.cookies.token; ;
   if (!token) {
     return res.redirect('/auth/login'); // Redirect to login if no token
   }

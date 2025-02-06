@@ -3,6 +3,7 @@
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #0056b3 #e0e0e0;
+    background-image: url('/img/chat_bg.png');
 }
 
 /* Webkit browsers (Chrome, Safari, Edge) */
@@ -43,8 +44,13 @@
 .received {
     align-self: flex-start;
     margin: 0 auto 0 0;
-    background-color: #fff;
+    background-color: #333;
+    color: white;
     position: relative;
+}
+
+.received .message-content small{
+    color: white !important;
 }
 
 .message p {
@@ -72,7 +78,7 @@
     width: 12px;
     height: 10px;
     border-radius: 0px 0px 0px 20px;
-    background-color: #fff;
+    background-color: #333;
     align-self: flex-end;
     position: absolute;
     top: 0px;
@@ -121,3 +127,19 @@ textarea:focus {
     display: block; 
 }
 
+.alertBox{
+    border: 0;
+    border-radius: 50%;
+    background-color: green;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding: 0px 5px;
+    font-size: 12px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-family: -webkit-body;
+}
