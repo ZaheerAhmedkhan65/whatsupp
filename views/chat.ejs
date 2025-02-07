@@ -10,13 +10,15 @@
       <!-- Chat Window -->
       <div class="col-lg-9 d-flex flex-column bg-light p-0">
         <!-- Chat Header (Fixed) -->
-        <div class="bg-primary py-2 px-3 text-white">
-          <h1 class="lead fs-4 fw-bold mb-0">
-           <a class="text-white text-decoration-none px-2" href="/users/select-receiver?token=<%= token %>">
+        <div class="bg-primary p-2 d-flex gap-2 text-white">
+          
+           <a class="d-block d-lg-none text-white text-decoration-none" href="/users/select-receiver?token=<%= token %>">
             <i class="ri-arrow-left-line"></i>
           </a> 
-          <%= receiverUsername %>
-          </h1>
+            <div>
+              <strong><%= receiverUsername %></strong>
+              <div class="typing"></div>
+          </div>
         </div>
 
         <!-- Chat Messages (Scrollable) -->
@@ -78,7 +80,70 @@
       </div>
     </div>
   </div>
+  <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io("http://localhost:3000");
+      const userId = "<%= userId %>";
+      const messageForm = document.getElementById("message-form");
+      const messageInput = document.getElementById("message");
+      const typingContainer = document.querySelector(".typing");
+      let typingTimeout ;
+      function stopTyping() {
+            socket.emit("stop typing");
+        }
 
+          messageInput.addEventListener("input", () => {
+                socket.emit("typing", "Typing . . .");
+                clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(stopTyping, 500);
+            });
+      messageForm.addEventListener("submit", (event) => {
+           event.preventDefault();
+           const message = messageInput.value.trim();
+           if (message) {
+             messageInput.value = "";
+             socket.emit("send_message", {
+               message,
+               receiverId: "<%= receiverId %>",
+               senderId: userId,
+               token: "<%= token %>"
+             });
+           }
+         });
+    
+      socket.on("receive_message", (data) => {
+        const messageContainer = document.createElement("div");
+        console.log(data);
+        if(data.senderId===userId) {
+          messageContainer.classList.add("message", "sent", "p-2", "mb-2", "rounded");
+          messageContainer.id = `message-container-${data.id}`;
+        }else{
+          messageContainer.classList.add("message", "received", "p-2", "mb-2", "rounded");
+          messageContainer.id = `message-container-${data.id}`;
+        }
+        messageContainer.innerHTML = `
+          <div class="message-content">
+            <p class="mb-1">
+              ${data.message}
+            </p>
+            <small class="text-muted">
+              ${data.created_at ? data.created_at : new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
+            </small>
+          </div>
+        `;
+        document.getElementById("chat-window").appendChild(messageContainer);
+        scrollToBottom();
+      });
+
+      
+      socket.on("typing", () => {
+        typingContainer.textContent = "Typing . . .";
+        });
+
+        socket.on("stop typing", () => {
+          typingContainer.textContent = "";
+        });
+    </script>
   <!-- JavaScript for Auto-Scrolling & Form Handling -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -114,9 +179,10 @@
     document.getElementById('message').addEventListener('keydown', (event) => {
       if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
-        document.getElementById('message-form').submit();
+        document.getElementById('message-form').dispatchEvent(new Event("submit"));
       }
     });
+
   </script>
 
   <script>

@@ -143,3 +143,9 @@ textarea:focus {
     font-weight: bold;
     font-family: -webkit-body;
 }
+
+.typing{
+    font-size: 11px;
+    padding: 0;
+    margin: 0;
+}
