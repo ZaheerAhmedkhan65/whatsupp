@@ -10,7 +10,6 @@ const io = socketIo(server);
 // Handle socket connections
 io.on("connection", (socket) => {
   console.log("A user connected: ", socket.id);
-
   // Handle disconnections
   socket.on("disconnect", () => {
     console.log("User disconnected: ", socket.id);
