@@ -5,7 +5,13 @@ const socketIo = require("socket.io");
 const db = require('./config/db');
 
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+  transports: ["websocket", "polling"],
+});
 
 // Handle socket connections
 io.on("connection", (socket) => {
