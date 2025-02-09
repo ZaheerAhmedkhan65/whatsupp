@@ -5,44 +5,44 @@ const socketIo = require("socket.io");
 const db = require('./config/db');
 
 const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-  transports: ["polling"],
-});
+// const io = socketIo(server, {
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"],
+//   },
+//   transports: ["polling"],
+// });
 
 // Handle socket connections
-io.on("connection", (socket) => {
-  console.log("A user connected: ", socket.id);
+// io.on("connection", (socket) => {
+//   console.log("A user connected: ", socket.id);
 
-  // Handle disconnections
-  socket.on("disconnect", () => {
-    console.log("User disconnected: ", socket.id);
-  });
-  // Handle sending messages
-  socket.on("send_message", (data) => {
-    db.query("INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)", [data.senderId, data.receiverId, data.message], (err, results) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      console.log(results);                                                                                                                                                                                                                                                                                        
-    });
-    io.emit("receive_message", data);
-  });
+//   // Handle disconnections
+//   socket.on("disconnect", () => {
+//     console.log("User disconnected: ", socket.id);
+//   });
+//   // Handle sending messages
+//   socket.on("send_message", (data) => {
+//     db.query("INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)", [data.senderId, data.receiverId, data.message], (err, results) => {
+//       if (err) {
+//         console.error(err);
+//         return;
+//       }
+//       console.log(results);                                                                                                                                                                                                                                                                                        
+//     });
+//     io.emit("receive_message", data);
+//   });
 
 
-  socket.on("typing", (data) => {
-    socket.broadcast.emit("typing", data);
-});
+//   socket.on("typing", (data) => {
+//     socket.broadcast.emit("typing", data);
+// });
 
-socket.on("stop typing", () => {
-    socket.broadcast.emit("stop typing");
-});
+// socket.on("stop typing", () => {
+//     socket.broadcast.emit("stop typing");
+// });
   
-});
+// });
 
 // Start the server using `server.listen`
 server.listen(PORT, () => {
